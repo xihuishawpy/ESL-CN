@@ -101,8 +101,6 @@ def tile_raster_images(X, img_shape, tile_shape, tile_spacing=(0, 0),
                 out_array[:, :, i] = tile_raster_images(
                     X[i], img_shape, tile_shape, tile_spacing,
                     scale_rows_to_unit_interval, output_pixel_vals)
-        return out_array
-
     else:
         # if we are dealing with only one channel
         H, W = img_shape
@@ -135,4 +133,5 @@ def tile_raster_images(X, img_shape, tile_shape, tile_spacing=(0, 0),
                         tile_row * (H + Hs): tile_row * (H + Hs) + H,
                         tile_col * (W + Ws): tile_col * (W + Ws) + W
                     ] = this_img * c
-        return out_array
+
+    return out_array

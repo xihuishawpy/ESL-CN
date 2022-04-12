@@ -230,10 +230,7 @@ class RBM(object):
         # decide how to initialize persistent chain:
         # for CD, we use the newly generate hidden sample
         # for PCD, we initialize from the old state of the chain
-        if persistent is None:
-            chain_start = ph_sample
-        else:
-            chain_start = persistent
+        chain_start = ph_sample if persistent is None else persistent
         # end-snippet-2
         # perform actual negative phase
         # in order to implement CD-k/PCD-k we need to scan over the
@@ -349,15 +346,13 @@ class RBM(object):
 
         """
 
-        cross_entropy = T.mean(
+        return T.mean(
             T.sum(
-                self.input * T.log(T.nnet.sigmoid(pre_sigmoid_nv)) +
-                (1 - self.input) * T.log(1 - T.nnet.sigmoid(pre_sigmoid_nv)),
-                axis=1
+                self.input * T.log(T.nnet.sigmoid(pre_sigmoid_nv))
+                + (1 - self.input) * T.log(1 - T.nnet.sigmoid(pre_sigmoid_nv)),
+                axis=1,
             )
         )
-
-        return cross_entropy
 
 
 def test_rbm(learning_rate=0.1, training_epochs=15,
@@ -438,10 +433,7 @@ def test_rbm(learning_rate=0.1, training_epochs=15,
     for epoch in range(training_epochs):
 
         # go through the training set
-        mean_cost = []
-        for batch_index in range(n_train_batches):
-            mean_cost += [train_rbm(batch_index)]
-
+        mean_cost = [train_rbm(batch_index) for batch_index in range(n_train_batches)]
         print('Training epoch %d, cost is ' % epoch, numpy.mean(mean_cost))
 
         # Plot filters after each training epoch

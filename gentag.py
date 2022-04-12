@@ -5,9 +5,9 @@ import glob
 # (\b[a-zA-Z ]+\b): original
 pat = re.compile(r"\*\*([\u4e00-\u9fa5\-a-zA-Z]+)\s?\((\b[a-zA-Z ,\-]+\b)\)\*\*")
 
-tags = [[] for i in range(26)]
+tags = [[] for _ in range(26)]
 docsdir = os.listdir("docs/")
-tagdict = dict()
+tagdict = {}
 for i in range(1, 27):
     # get the idx of the child directory
     for idx, x in enumerate(docsdir):
@@ -16,9 +16,8 @@ for i in range(1, 27):
     chdir = docsdir[idx]
     for file in glob.glob(f"docs/{chdir}/*.md"):
         print(f"processing {file}...")
-        fl = open(file, "rt")
-        contents = fl.read()
-        fl.close()
+        with open(file, "rt") as fl:
+            contents = fl.read()
         mat = pat.findall(contents)
         # get unique elements
         mat = list(set(mat))
@@ -36,26 +35,19 @@ for i in range(1, 27):
                     tagdict[key].append(val)
                 except:
                     tagdict[key] = [val]
-#                val = f"- [{m[1]}: {m[0]}]({url})"
-                # get the first character
 #                tags[ord(m[1][0].upper()) - ord('A')].append(val)
 
-# rearrange 
-for k in tagdict.keys():
-    v = tagdict[k]
-    val = "- " + k + " (" + ', '.join(v) + ")"
+# rearrange
+for k, v in tagdict.items():
+    val = f"- {k} (" + ', '.join(v) + ")"
     tags[ord(k[0].upper()) - ord('A')].append(val)
 
-# write into a tag file
-tagpage = open("docs/tag.md", "w")
-letters = [chr(i+ord('A')) for i in range(26)]
-for i in range(26):
-    # escape letters without tags
-    if tags[i]:
-        # section
-        tagpage.write(f"\n## {letters[i]}\n")
-        # !!strange behavior of `writelines`: https://stackoverflow.com/questions/13730107/writelines-writes-lines-without-newline-just-fills-the-file
-        tagpage.writelines(tag + '\n' for tag in tags[i])
-
-    
-tagpage.close()
+with open("docs/tag.md", "w") as tagpage:
+    letters = [chr(i+ord('A')) for i in range(26)]
+    for i in range(26):
+        # escape letters without tags
+        if tags[i]:
+            # section
+            tagpage.write(f"\n## {letters[i]}\n")
+            # !!strange behavior of `writelines`: https://stackoverflow.com/questions/13730107/writelines-writes-lines-without-newline-just-fills-the-file
+            tagpage.writelines(tag + '\n' for tag in tags[i])

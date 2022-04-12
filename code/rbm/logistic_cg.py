@@ -87,7 +87,7 @@ class LogisticRegression(object):
             borrow=True
         )
         # W is represented by the fisr n_in*n_out elements of theta
-        self.W = self.theta[0:n_in * n_out].reshape((n_in, n_out))
+        self.W = self.theta[:n_in * n_out].reshape((n_in, n_out))
         # b is the rest (last n_out elements)
         self.b = self.theta[n_in * n_out:n_in * n_out + n_out]
 

@@ -31,7 +31,7 @@ def setOfWords2Vec(vocabList, inputSet):
         if word in vocabList:
             returnVec[vocabList.index(word)] = 1
         else: 
-            print("the word: %s is not in my Vocabulary!" % word)
+            print(f"the word: {word} is not in my Vocabulary!")
     return returnVec   
     
 def trainNB0(trainMatrix, trainCategory):
@@ -59,19 +59,13 @@ def trainNB0(trainMatrix, trainCategory):
 def classifyNB(vec2Classify, p0Vec, p1Vec, pClass1):
     p1 = sum(vec2Classify * p1Vec) + np.log(pClass1)
     p0 = sum(vec2Classify * p0Vec) + np.log(1.0 - pClass1)
-    if p1 > p0:
-        return 1
-    else:
-        return 0
+    return 1 if p1 > p0 else 0
 
 if __name__ =="__main__":
     listOPosts,listClasses = loadDataSet()
     myVocabList = createVocabList(listOPosts)
     print(myVocabList)
-    trainMat = []
-    for postinDoc in listOPosts:
-        trainMat.append(setOfWords2Vec(myVocabList, postinDoc))
-        
+    trainMat = [setOfWords2Vec(myVocabList, postinDoc) for postinDoc in listOPosts]
     p0V,p1V,pAb=trainNB0(trainMat,listClasses)
     print(p0V)
     print(p1V)
